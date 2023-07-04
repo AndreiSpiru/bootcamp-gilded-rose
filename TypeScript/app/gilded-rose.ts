@@ -25,12 +25,12 @@ export class GildedRose {
         if (this.items[i].name != 'Aged Brie' && this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') { // Then regular item
           change--     
         } else {
+            // Accounts for both Aged Brie and Backstage passes
             change++
             if (this.items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-              if (this.items[i].sellIn <= 10) {
-                change++
-              }
               if (this.items[i].sellIn <= 5) {
+                change += 2
+              } else if (this.items[i].sellIn <= 10) {
                 change++
               }
             }
@@ -45,8 +45,8 @@ export class GildedRose {
             change *= 2
           }
         }
-        this.items[i].sellIn -= 1;
 
+        this.items[i].sellIn -= 1;
         if (change < 0 && this.items[i].name.startsWith('Conjured')) {
           change *=  2
         } 
@@ -60,6 +60,7 @@ export class GildedRose {
   }
 }
 
+// Clamps given value between min and max
 function clamp(val, min, max) {
   return val > max ? max : val < min ? min : val;
 }
