@@ -91,6 +91,12 @@ describe('Gilded Rose', () => {
     expect(items[0].quality).toBe(50);
   });
 
+  it('Backstage passes do not increase in quality past 50 (from 49)', () => {
+    const gildedRose = new GildedRose([new Item('Backstage passes to a TAFKAL80ETC concert', 1, 49)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(50);
+  });
+
   it('Multiple items have functionality', () => {
     const gildedRose = new GildedRose([new Item('foo', 7, 10), new Item('foo2', 8, 37)]);
     const items = gildedRose.updateQuality();
@@ -102,5 +108,39 @@ describe('Gilded Rose', () => {
     const gildedRose = new GildedRose([new Item('Aged Brie', -1, 7)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(9);
-  });  
+  });
+  
+  it('Multiple special items have functionality', () => {
+    const gildedRose = new GildedRose([new Item('Aged Brie', 7, 10), new Item('Backstage passes to a TAFKAL80ETC concert', 8, 37)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(11);
+    expect(items[1].quality).toBe(39);
+  });
+
+  it('Multiple updates function correctly (quality)', () => {
+    const gildedRose = new GildedRose([new Item('Aged Brie', 7, 10), new Item('Backstage passes to a TAFKAL80ETC concert', 8, 37)]);
+    let items
+    for (let i = 0; i < 10; i++) {
+      items = gildedRose.updateQuality();
+    }
+    expect(items[0].quality).toBe(23);
+    expect(items[1].quality).toBe(0);
+  });
+
+  it('Multiple updates function correctly (sell in)', () => {
+    const gildedRose = new GildedRose([new Item('Aged Brie', 7, 10), new Item('Backstage passes to a TAFKAL80ETC concert', 8, 37), new Item('Sulfuras, Hand of Ragnaros', 0, 80)]);
+    let items
+    for (let i = 0; i < 10; i++) {
+      items = gildedRose.updateQuality();
+    }
+    expect(items[0].sellIn).toBe(-3);
+    expect(items[1].sellIn).toBe(-2);
+    expect(items[2].sellIn).toBe(0);
+  });
+
+  it('Conjured regular item degrades in quality twice as fast', () => {
+    const gildedRose = new GildedRose([new Item('Conjured foo', 7, 10)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(8);
+  });
 });
